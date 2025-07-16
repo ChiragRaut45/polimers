@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PolyBot Chat Assistant</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app-container">
+    <div id="chatbox">
+      <div id="chat-header">PolyBot 🤖</div>
+      <div id="chat-messages"></div>
+      <div id="user-input">
+        <input type="text" id="user-message" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+       <button class="mic-button" onclick="startRecording()" title="Speak">
+  🎤
+</button>
+
+
+      </div>
+    </div>
+    <div id="location-links">
+      <h2>Product Categories</h2>
+      <ul id="destination-list"></ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

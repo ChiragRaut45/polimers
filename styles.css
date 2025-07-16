@@ -1,0 +1,223 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+  padding: 20px;
+  color: #ffffff;
+}
+
+#app-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  height: 80vh;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#chatbox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#location-links {
+  width: 300px;
+  padding: 20px;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  color: #e0e0e0;
+}
+
+#chat-header {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+  padding: 15px;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  letter-spacing: 0.5px;
+}
+
+#chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+}
+
+#user-input {
+  display: flex;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#user-input input {
+  flex-grow: 1;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 30px;
+  margin-right: 10px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+#user-input input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#user-input input:focus {
+  border-color: #4a90e2;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+#user-input button {
+  background: linear-gradient(135deg, #4a90e2, #357ABD);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+#user-input button:hover {
+  background: linear-gradient(135deg, #357ABD, #2c6db5);
+}
+
+.bot-message,
+.user-message {
+  max-width: 80%;
+  padding: 12px 18px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+}
+
+.bot-message {
+  background: rgba(74, 144, 226, 0.1);
+  color: #d9e9ff;
+  align-self: flex-start;
+  border: 1px solid rgba(74, 144, 226, 0.3);
+}
+
+.user-message {
+  background: rgba(120, 240, 180, 0.1);
+  color: #d4ffe4;
+  align-self: flex-end;
+  border: 1px solid rgba(120, 240, 180, 0.3);
+}
+
+.bot-message a,
+#location-links a {
+  color: #66ccff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.bot-message a:hover,
+#location-links a:hover {
+  text-decoration: underline;
+}
+
+#location-links h2 {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #66ccff;
+}
+
+#location-links ul {
+  list-style: none;
+}
+
+#location-links li {
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  #app-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  #chatbox {
+    height: 70vh;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  #location-links {
+    width: 100%;
+    height: 30vh;
+  }
+}
+
+.mic-button {
+  background-color: #1f1f2e;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 22px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+}
+
+.mic-button:hover {
+  background-color: #4a90e2;
+  box-shadow: 0 0 12px rgba(74, 144, 226, 0.6);
+}
+
+.mic-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 14px rgba(74, 144, 226, 0.8);
+}
+.mic-button.recording {
+  background-color: red;
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
+}

@@ -171,7 +171,7 @@ html, body {
   font-size: 0.95rem;
 }
 
-/* Microphone Button */
+/* Microphone Button 
 .mic-button {
   background-color: #1f1f2e;
   border: none;
@@ -215,7 +215,48 @@ html, body {
   100% {
     box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
   }
+}*/
+
+
+.mic-button {
+  width: 60px;         /* Increased width */
+  height: 60px;        /* Increased height */
+  border-radius: 50%;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
 }
+
+.mic-button i {
+  font-size: 24px;      /* Increased icon size */
+  color: white;
+}
+
+/* Recording effect */
+.mic-button.recording {
+  background: red;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(255, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
+
+
 
 /* ✅ Responsive Media Queries */
 @media (max-width: 1024px) {

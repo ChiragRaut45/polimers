@@ -74,7 +74,7 @@ html, body {
 #user-input {
   display: flex;
   gap: 10px;
-  padding: 15px;
+  padding: 10px;
   background: rgba(255, 255, 255, 0.03);
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   flex-wrap: wrap;
@@ -172,8 +172,8 @@ html, body {
 }
 
 .mic-button {
-  width: 60px;         /* Increased width */
-  height: 60px;        /* Increased height */
+  width: 40px;         /* Increased width */
+  height: 40px;        /* Increased height */
   border-radius: 50%;
   background: linear-gradient(to right, #4facfe, #00f2fe);
   border: none;

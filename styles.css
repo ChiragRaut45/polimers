@@ -82,7 +82,7 @@ html, body {
 
 #user-input input {
   flex: 1;
-  min-width: 200px;
+  min-width: 100px;
   padding: 12px 20px;
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
@@ -117,7 +117,15 @@ html, body {
 }
 
 /* Chat Bubbles */
-.bot-message,
+.bot-message{
+  max-width: 80%;
+  padding: 12px 18px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+}
 .user-message {
   max-width: 80%;
   padding: 12px 18px;
@@ -187,7 +195,7 @@ html, body {
 }
 
 .mic-button i {
-  font-size: 24px;      /* Increased icon size */
+  font-size: 15px;      /* Increased icon size */
   color: white;
 }
 

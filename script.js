@@ -69,37 +69,61 @@ userMessageInput.addEventListener('keypress', function (event) {
   }
 });
 
-// Welcome message and list population
+// Welcome message and populate list
 addMessage("Hi there! 👋 I'm PolyBot, your friendly assistant for product prices. Ask about Polymer, Energy, Crude, and more.");
 populateDestinationList();
 
-// Speech Recognition Setup
+// ====== SPEECH RECOGNITION ======
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (SpeechRecognition) {
   const recognition = new SpeechRecognition();
+  let isRecording = false;
+
   recognition.continuous = false;
   recognition.lang = 'en-US';
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
- function startRecording() {
-  const micBtn = document.querySelector(".mic-button");
-  micBtn.classList.add("recording");
-  recognition.start();
+  window.startRecording = function () {
+    const micBtn = document.querySelector(".mic-button");
+    const stopBtn = document.getElementById("stop-button");
 
-  recognition.onend = () => {
-    micBtn.classList.remove("recording");
+    if (isRecording) return;
+
+    recognition.start();
+    micBtn.classList.add("recording");
+    stopBtn.style.display = "inline-block";
+    isRecording = true;
   };
-}
+
+  window.stopRecording = function () {
+    recognition.stop();
+    document.querySelector(".mic-button").classList.remove("recording");
+    document.getElementById("stop-button").style.display = "none";
+    isRecording = false;
+  };
+
+  recognition.onspeechend = function () {
+    setTimeout(() => {
+      if (isRecording) {
+        recognition.stop();
+        document.querySelector(".mic-button").classList.remove("recording");
+        document.getElementById("stop-button").style.display = "none";
+        isRecording = false;
+      }
+    }, 10000); // 10s silence
+  };
 
   recognition.onresult = function (event) {
     const transcript = event.results[0][0].transcript;
-    document.getElementById("user-message").value = transcript;
+    const inputBox = document.getElementById("user-message");
+    inputBox.value += (inputBox.value.trim() ? ' ' : '') + transcript;
   };
 
   recognition.onerror = function (event) {
     console.error("Speech recognition error", event.error);
+    stopRecording();
   };
 
 } else {

@@ -14,14 +14,21 @@
       <div id="chat-header">PolyBot 🤖</div>
       <div id="chat-messages"></div>
       <div id="user-input">
-        <input type="text" id="user-message" placeholder="Type your message..." />
-        <button onclick="sendMessage()">Send</button>
- <button class="mic-button" onclick="startRecording()" title="Speak">
-  <i class="fas fa-microphone"></i>
-</button>
+  <input type="text" id="user-message" placeholder="Type your message..." />
+  <button onclick="sendMessage()">Send</button>
+  
+  <!-- Mic Button -->
+  <button class="mic-button" onclick="startRecording()" title="Speak">
+    <i class="fas fa-microphone"></i>
+  </button>
 
+  <!-- Stop Button (initially hidden) -->
+  <button id="stop-button" onclick="stopRecording()" title="Stop Recording">🛑</button>
 
-      </div>
+  <!-- Optional: Clear Button -->
+ <!-- <button onclick="document.getElementById('user-message').value=''" title="Clear Message">❌</button>-->
+</div>
+
     </div>
     <div id="location-links">
       <h2>Product Categories</h2>

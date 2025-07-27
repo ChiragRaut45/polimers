@@ -243,6 +243,21 @@ html, body {
   background: red;
   animation: pulse 1s infinite;
 }
+#stop-button {
+  background-color: #ff4d4d;
+  border: none;
+  border-radius: 30px;
+  color: white;
+  font-weight: bold;
+  padding: 10px 16px;
+  cursor: pointer;
+  display: none;
+  transition: all 0.3s ease;
+}
+
+#stop-button:hover {
+  background-color: #e60000;
+}
 
 @keyframes pulse {
   0% {

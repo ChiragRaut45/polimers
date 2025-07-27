@@ -283,3 +283,44 @@ html, body {
     font-size: 18px;
   }
 }
+@media (max-width: 600px) {
+  #user-input {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .mic-button,
+  #stop-button,
+  #user-input button {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #stop-button {
+    font-size: 0;
+    position: relative;
+  }
+
+  #stop-button::before {
+    content: "■";
+    font-size: 20px;
+    color: white;
+  }
+
+  .mic-button i {
+    font-size: 20px;
+  }
+
+  #user-input input {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+}

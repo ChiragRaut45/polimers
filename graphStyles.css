@@ -1,0 +1,39 @@
+/* graphStyles.css */
+/* graphStyles.css */
+#graph-view {
+  width: 100%;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 10px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+#priceGraph {
+  width: 100% !important;
+  max-width: 700px;
+  height: 400px !important;
+  background: #ffffff;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.toggle-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background-color: #155ab6;
+}
+
+

@@ -2,7 +2,7 @@ const chatMessages = document.getElementById('chat-messages');
 const userMessageInput = document.getElementById('user-message');
 const destinationList = document.getElementById('destination-list');
 
-// Define product category links
+// Product category links
 const polymerPages = {
   "Polymer": "https://polymer-tau.vercel.app/products?cId=1&pId=22",
   "Energy": "https://polymer-tau.vercel.app/products?cId=2&pId=23",
@@ -37,8 +37,11 @@ function botResponse(message) {
   }
 
   if (message.includes("pvc")) {
-    fetchPVCData(); // Call the async fetch function
+    fetchProductData("PVC");
     return "Fetching PVC data... ⏳";
+  } else if (message.includes("pp")) {
+    fetchProductData("PP");
+    return "Fetching PP data... ⏳";
   }
 
   return "Sorry, I didn’t understand that. Please ask about any of these categories: " + Object.keys(polymerPages).join(', ');
@@ -74,18 +77,15 @@ userMessageInput.addEventListener('keypress', function (event) {
   }
 });
 
-// Welcome message and populate list
 addMessage("Hi there! 👋 I'm PolyBot, your friendly assistant for product prices. Ask about Polymer, Energy, Crude, and more.");
 populateDestinationList();
 
-// ====== FETCH PVC DATA FUNCTION ======
-function fetchPVCData() {
+// ====== Fetch Product Data and Create Unique Elements ======
+function fetchProductData(productName) {
   fetch("https://saptechno-001-site7.anytempurl.com/api/AjaxAPI/MagicSearch", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ inputdata: "PVC" })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ inputdata: productName })
   })
     .then(res => res.json())
     .then(json => {
@@ -94,21 +94,24 @@ function fetchPVCData() {
 
       const entries = [];
       const matches = raw.match(/<tr>.*?<\/tr>/g);
-
       if (!matches) return addMessage("No table rows found in data.");
 
       matches.forEach(row => {
-        const nameMatch = row.match(/<Name>(.*?)<\/Name>/);
+        const nameMatches = [...row.matchAll(/<name>(.*?)<\/name>/gi)];
         const unitMatch = row.match(/<Unit>(.*?)<\/Unit>/);
         const dateMatch = row.match(/<Date>(.*?)<\/Date>/);
         const pricesMatch = row.match(/<prices>(\[.*?\])<\/prices>/);
+
+        const cleanedName = nameMatches.length > 0
+          ? nameMatches.map(m => m[1].trim()).join(' ').replace(/^PVC\s+/i, '')
+          : 'PVC';
 
         if (pricesMatch) {
           try {
             const prices = JSON.parse(pricesMatch[1]);
             prices.forEach(p => {
               entries.push({
-                Product: nameMatch?.[1] || 'PVC',
+                Product: cleanedName,
                 Unit: unitMatch?.[1] || '',
                 Date: dateMatch?.[1] || '',
                 Price: p.price,
@@ -120,34 +123,45 @@ function fetchPVCData() {
               });
             });
           } catch (err) {
-            console.warn("Price JSON parse failed:", err);
+            console.error('Error parsing prices:', err);
           }
         }
       });
 
-      if (entries.length === 0) {
-        return addMessage("No structured price data found.");
-      }
+      if (entries.length === 0) return addMessage("No structured price data found.");
 
-      // Create HTML table
-      let html = `<head><link rel="stylesheet" href="tableStyles.css">
-  </head><div class="table-container"><table class="styled-table">
-  <thead>
-    <tr>
-      <th>Date</th><th>Product</th><th>Unit</th><th>Price</th>
-      <th>1 Month</th><th>3 Months</th><th>6 Months</th><th>1 Year</th><th>3 Years</th>
-    </tr>
-  </thead><tbody>`;
-entries.forEach(e => {
-  html += `<tr>
-    <td>${e.Date}</td><td>${e.Product}</td><td>${e.Unit}</td><td>${e.Price}</td>
-    <td>${e.OneMonth}</td><td>${e.ThreeMonth}</td><td>${e.SixMonth}</td>
-    <td>${e.OneYear}</td><td>${e.ThreeYear}</td>
-  </tr>`;
-});
-html += `</tbody></table></div>`;
-addMessage(html);
+      const uniqueId = `graph-${Date.now()}`;
 
+      // Generate HTML with dynamic IDs
+      let html = `
+        <div class="table-container" id="table-${uniqueId}">
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>Product</th><th>Unit</th><th>Date</th><th>Price</th>
+                <th>1 Month</th><th>3 Months</th><th>6 Months</th><th>1 Year</th><th>3 Years</th>
+              </tr>
+            </thead>
+            <tbody>`;
+
+      entries.forEach(e => {
+        html += `<tr>
+          <td>${e.Product}</td><td>${e.Unit}</td><td>${e.Date}</td><td>${e.Price}</td>
+          <td>${e.OneMonth}</td><td>${e.ThreeMonth}</td><td>${e.SixMonth}</td>
+          <td>${e.OneYear}</td><td>${e.ThreeYear}</td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>
+        <button onclick="document.getElementById('graph-${uniqueId}').style.display='block'" class="toggle-btn">📊 Show Graph</button>
+        </div>
+        <div id="graph-${uniqueId}" style="display:none; margin-top:10px;">
+          <canvas id="canvas-${uniqueId}" width="600" height="300"></canvas>
+          <button onclick="document.getElementById('graph-${uniqueId}').style.display='none'" class="toggle-btn">📋 Hide Graph</button>
+        </div>`;
+
+      addMessage(html);
+      setTimeout(() => drawGraph(entries, `canvas-${uniqueId}`), 200);
     })
     .catch(err => {
       console.error("Error fetching PVC data:", err);
@@ -155,7 +169,42 @@ addMessage(html);
     });
 }
 
-// ====== SPEECH RECOGNITION ======
+// ====== Draw Graph with Custom Canvas ID ======
+function drawGraph(data, canvasId) {
+  const ctx = document.getElementById(canvasId).getContext("2d");
+
+  const labels = ["1 Month", "3 Months", "6 Months", "1 Year", "3 Years"];
+  const colors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f", "#edc949"];
+
+  const datasets = data.map((product, index) => ({
+    label: product.Product,
+    data: [
+      parseFloat(product.OneMonth || 0),
+      parseFloat(product.ThreeMonth || 0),
+      parseFloat(product.SixMonth || 0),
+      parseFloat(product.OneYear || 0),
+      parseFloat(product.ThreeYear || 0)
+    ],
+    borderColor: colors[index % colors.length],
+    fill: false,
+    tension: 0.3
+  }));
+
+  new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        x: { display: true, title: { display: true, text: 'Time Duration' } },
+        y: { display: true, title: { display: true, text: 'Price Value' }, beginAtZero: false }
+      }
+    }
+  });
+}
+
+// ====== Speech Recognition ======
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (SpeechRecognition) {

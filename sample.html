@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MagicSearch API Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+    #results {
+      margin-top: 20px;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Call MagicSearch API</h1>
+  <button onclick="callMagicSearch()">Search "PVC"</button>
+
+  <div id="results">
+    <strong>Response:</strong>
+    <pre id="output">Click the button to fetch results...</pre>
+  </div>
+
+  <script>
+    function callMagicSearch() {
+      document.getElementById("output").innerText = "Loading...";
+
+      fetch("https://saptechno-001-site7.anytempurl.com/api/AjaxAPI/MagicSearch", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ inputdata: "PVC" })
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+        console.log("API response:", data);
+      })
+      .catch(error => {
+        document.getElementById("output").innerText = "Error: " + error.message;
+        console.error("Fetch error:", error);
+      });
+    }
+  </script>
+
+</body>
+</html>

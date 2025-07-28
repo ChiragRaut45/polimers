@@ -61,33 +61,41 @@ function getPVCData() {
 
     if (!matches) return document.getElementById("results").innerText = "No rows found.";
 
-    matches.forEach(row => {
-      const nameMatch = row.match(/<Name>(.*?)<\/Name>/g);
-      const unitMatch = row.match(/<Unit>(.*?)<\/Unit>/);
-      const dateMatch = row.match(/<Date>(.*?)<\/Date>/);
-      const pricesMatch = row.match(/<prices>(\[.*?\])<\/prices>/);
+matches.forEach(row => {
+  // Match all <Name> or <name> tags (case-insensitive)
+  const nameMatches = [...row.matchAll(/<name>(.*?)<\/name>/gi)];
+  const unitMatch = row.match(/<Unit>(.*?)<\/Unit>/);
+  const dateMatch = row.match(/<Date>(.*?)<\/Date>/);
+  const pricesMatch = row.match(/<prices>(\[.*?\])<\/prices>/);
+// Combine all <Name>/<name> contents into a single string
+const productName = nameMatches.length > 0
+  ? nameMatches.map(match => match[1].trim()).join(' ')
+      .replace(/^PVC\s+/i, '') // Remove starting PVC followed by space (case-insensitive)
+  : 'PVC'; // fallback default
 
-      if (pricesMatch) {
-        try {
-          const prices = JSON.parse(pricesMatch[1]);
-          prices.forEach(p => {
-            entries.push({
-              Product: nameMatch?.[1]?.replace(/<\/?Name>/g, '') || 'PVC',
-              Unit: unitMatch?.[1] || '',
-              Date: dateMatch?.[1] || '',
-              Price: p.price,
-              OneMonth: p.OneMonthPrice,
-              ThreeMonth: p.threeMonthPrice,
-              SixMonth: p.SixMonthPrice,
-              OneYear: p.OneyearPrice,
-              ThreeYear: p.threeyearPrice
-            });
-          });
-        } catch (err) {
-          console.warn("Price JSON parse failed:", err);
-        }
-      }
-    });
+  if (pricesMatch) {
+    try {
+      const prices = JSON.parse(pricesMatch[1]);
+      prices.forEach(p => {
+        entries.push({
+          Product: productName,
+          Unit: unitMatch?.[1] || '',
+          Date: dateMatch?.[1] || '',
+          Price: p.price,
+          OneMonth: p.OneMonthPrice,
+          ThreeMonth: p.threeMonthPrice,
+          SixMonth: p.SixMonthPrice,
+          OneYear: p.OneyearPrice,
+          ThreeYear: p.threeyearPrice
+        });
+      });
+    } catch (err) {
+      console.error('Error parsing prices:', err);
+    }
+  }
+});
+
+
 
     if (entries.length === 0) {
       document.getElementById("results").innerText = "No structured data found in HTML.";

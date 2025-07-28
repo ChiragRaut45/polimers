@@ -42,7 +42,11 @@ function botResponse(message) {
   } else if (message.includes("pp")) {
     fetchProductData("PP");
     return "Fetching PP data... ⏳";
-  }
+  }else if (message.includes("ps")) {
+  fetchProductData("PS");
+  return "Fetching PS data... ⏳";
+}
+  
 
   return "Sorry, I didn’t understand that. Please ask about any of these categories: " + Object.keys(polymerPages).join(', ');
 }
@@ -102,9 +106,10 @@ function fetchProductData(productName) {
         const dateMatch = row.match(/<Date>(.*?)<\/Date>/);
         const pricesMatch = row.match(/<prices>(\[.*?\])<\/prices>/);
 
-        const cleanedName = nameMatches.length > 0
-          ? nameMatches.map(m => m[1].trim()).join(' ').replace(/^PVC\s+/i, '')
-          : 'PVC';
+       const cleanedName = nameMatches.length > 0
+  ? nameMatches.map(m => m[1].trim()).join(' ').replace(/^(PVC|PP|PS)\s+/i, '')
+  : 'PVC';
+
 
         if (pricesMatch) {
           try {
@@ -164,8 +169,8 @@ function fetchProductData(productName) {
       setTimeout(() => drawGraph(entries, `canvas-${uniqueId}`), 200);
     })
     .catch(err => {
-      console.error("Error fetching PVC data:", err);
-      addMessage("Error fetching PVC data.");
+      console.error("Error fetching  data:", err);
+      addMessage("Error fetching  data.");
     });
 }
 
@@ -243,7 +248,7 @@ if (SpeechRecognition) {
         document.getElementById("stop-button").style.display = "none";
         isRecording = false;
       }
-    }, 10000);
+    }, 3000);
   };
 
   recognition.onresult = function (event) {

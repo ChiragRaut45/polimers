@@ -36,11 +36,6 @@ function botResponse(message) {
     }
   }
 
-  if (message.includes("pvc")) {
-    fetchPVCData(); // Call the async fetch function
-    return "Fetching PVC data... ⏳";
-  }
-
   return "Sorry, I didn’t understand that. Please ask about any of these categories: " + Object.keys(polymerPages).join(', ');
 }
 
@@ -77,83 +72,6 @@ userMessageInput.addEventListener('keypress', function (event) {
 // Welcome message and populate list
 addMessage("Hi there! 👋 I'm PolyBot, your friendly assistant for product prices. Ask about Polymer, Energy, Crude, and more.");
 populateDestinationList();
-
-// ====== FETCH PVC DATA FUNCTION ======
-function fetchPVCData() {
-  fetch("https://saptechno-001-site7.anytempurl.com/api/AjaxAPI/MagicSearch", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ inputdata: "PVC" })
-  })
-    .then(res => res.json())
-    .then(json => {
-      const raw = json[0]?.data;
-      if (!raw) return addMessage("No data found in response.");
-
-      const entries = [];
-      const matches = raw.match(/<tr>.*?<\/tr>/g);
-
-      if (!matches) return addMessage("No table rows found in data.");
-
-      matches.forEach(row => {
-        const nameMatch = row.match(/<Name>(.*?)<\/Name>/);
-        const unitMatch = row.match(/<Unit>(.*?)<\/Unit>/);
-        const dateMatch = row.match(/<Date>(.*?)<\/Date>/);
-        const pricesMatch = row.match(/<prices>(\[.*?\])<\/prices>/);
-
-        if (pricesMatch) {
-          try {
-            const prices = JSON.parse(pricesMatch[1]);
-            prices.forEach(p => {
-              entries.push({
-                Product: nameMatch?.[1] || 'PVC',
-                Unit: unitMatch?.[1] || '',
-                Date: dateMatch?.[1] || '',
-                Price: p.price,
-                OneMonth: p.OneMonthPrice,
-                ThreeMonth: p.threeMonthPrice,
-                SixMonth: p.SixMonthPrice,
-                OneYear: p.OneyearPrice,
-                ThreeYear: p.threeyearPrice
-              });
-            });
-          } catch (err) {
-            console.warn("Price JSON parse failed:", err);
-          }
-        }
-      });
-
-      if (entries.length === 0) {
-        return addMessage("No structured price data found.");
-      }
-
-      // Create HTML table
-      let html = `<head><link rel="stylesheet" href="tableStyles.css">
-  </head><div class="table-container"><table class="styled-table">
-  <thead>
-    <tr>
-      <th>Date</th><th>Product</th><th>Unit</th><th>Price</th>
-      <th>1 Month</th><th>3 Months</th><th>6 Months</th><th>1 Year</th><th>3 Years</th>
-    </tr>
-  </thead><tbody>`;
-entries.forEach(e => {
-  html += `<tr>
-    <td>${e.Date}</td><td>${e.Product}</td><td>${e.Unit}</td><td>${e.Price}</td>
-    <td>${e.OneMonth}</td><td>${e.ThreeMonth}</td><td>${e.SixMonth}</td>
-    <td>${e.OneYear}</td><td>${e.ThreeYear}</td>
-  </tr>`;
-});
-html += `</tbody></table></div>`;
-addMessage(html);
-
-    })
-    .catch(err => {
-      console.error("Error fetching PVC data:", err);
-      addMessage("Error fetching PVC data.");
-    });
-}
 
 // ====== SPEECH RECOGNITION ======
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -194,7 +112,7 @@ if (SpeechRecognition) {
         document.getElementById("stop-button").style.display = "none";
         isRecording = false;
       }
-    }, 10000);
+    }, 10000); // 10s silence
   };
 
   recognition.onresult = function (event) {

@@ -1,6 +1,6 @@
 const chatMessages = document.getElementById('chat-messages');
 const userMessageInput = document.getElementById('user-message');
-const destinationList = document.getElementById('destination-list');
+const ProductList = document.getElementById('Product-list');
 
 // Product category links
 const polymerPages = {
@@ -63,7 +63,7 @@ function sendMessage() {
   }
 }
 
-function populateDestinationList() {
+function populateProductList() {
   Object.keys(polymerPages).forEach(category => {
     const li = document.createElement('li');
     const link = document.createElement('a');
@@ -71,7 +71,7 @@ function populateDestinationList() {
     link.target = '_blank';
     link.textContent = category;
     li.appendChild(link);
-    destinationList.appendChild(li);
+    ProductList.appendChild(li);
   });
 }
 
@@ -82,7 +82,7 @@ userMessageInput.addEventListener('keypress', function (event) {
 });
 
 addMessage("Hi there! 👋 I'm PolyBot, your friendly assistant for product prices. Ask about Polymer, Energy, Crude, and more.");
-populateDestinationList();
+populateProductList();
 
 // ====== Fetch Product Data and Create Unique Elements ======
 function fetchProductData(productName) {
@@ -265,3 +265,18 @@ if (SpeechRecognition) {
 } else {
   alert("Sorry, your browser doesn't support Speech Recognition.");
 }
+
+
+// ====== chat history ======
+let currentChatId = null;
+
+function startNewChat() {
+  currentChatId = `chat-${Date.now()}`;
+  localStorage.setItem("currentChatId", currentChatId);
+  localStorage.setItem(currentChatId, JSON.stringify([])); // empty array
+  document.getElementById('chat-messages').innerHTML = '';
+  addMessage("New chat started. 👋 Ask about a category like 'PVC' or 'Crude'.");
+  loadChatHistoryList();
+}
+
+
